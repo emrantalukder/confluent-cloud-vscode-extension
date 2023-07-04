@@ -1,0 +1,133 @@
+{
+  "name": "confluent-cloud-extension",
+  "displayName": "Confluent Cloud Extension",
+  "publisher": "emrantalukder",
+  "description": "Manage Confluent Cloud Resources",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.79.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "resourceTree",
+        "contents": "No Confluent Cloud resources found [learn more](https://www.confluent.cloud/).\n[Settings](command:confluentCloud.openConfiguration)"
+      }
+    ],
+    "views": {
+      "confluentCloud": [
+        {
+          "id": "resourceTree",
+          "name": "Resources",
+          "icon": "media/confluent.svg",
+          "contextualTitle": "Confluent Cloud"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "confluentCloud.refreshResourceTree",
+        "title": "Refresh Confluent Cloud Resources",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "confluentCloud.openConfiguration",
+        "title": "Open Settings"
+      },
+      {
+        "command": "confluentCloud.viewResource",
+        "title": "View",
+        "icon": {
+          "light": "resources/light/eye.svg",
+          "dark": "resources/dark/eye.svg"
+        }
+      },
+      {
+        "command": "confluentCloud.editResource",
+        "title": "Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      }
+    ],
+    "configuration": {
+      "title": "Confluent Cloud Extension",
+      "properties": {
+        "confluentCloud.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Confluent Cloud API Key"
+        },
+        "confluentCloud.apiSecret": {
+          "type": "string",
+          "default": "",
+          "description": "Confluent Cloud API Secret"
+        }
+      }
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "confluentCloud.openConfiguration",
+          "when": "view == resourceTree",
+          "group": "navigation"
+        },
+        {
+          "command": "confluentCloud.refreshResourceTree",
+          "when": "view == resourceTree",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "confluentCloud.viewResource",
+          "when": "view == resourceTree && viewItem == confluentCloudResource",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "confluentCloud",
+          "title": "Confluent Cloud",
+          "icon": "media/confluent.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.79.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "@vscode/test-electron": "^2.3.0",
+    "eslint": "^8.36.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^4.9.5"
+  },
+  "dependencies": {
+    "@pulumi/confluentcloud": "^1.20.0",
+    "axios": "^1.4.0"
+  }
+}
