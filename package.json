@@ -57,6 +57,14 @@
           "light": "resources/light/edit.svg",
           "dark": "resources/dark/edit.svg"
         }
+      },
+      {
+        "command": "confluentCloud.configureSchemaRegistry",
+        "title": "Configure Schema Registry",
+        "icon": {
+          "light": "resources/light/gear.svg",
+          "dark": "resources/dark/gear.svg"
+        }
       }
     ],
     "configuration": {
@@ -71,7 +79,29 @@
           "type": "string",
           "default": "",
           "description": "Confluent Cloud API Secret"
-        }
+        },
+        "confluentCloud.schemaRegistryApiKeys": {
+          "type": "array",
+          "default": [],
+          "description": "Schema Registry API Keys",
+          "items": {
+            "type": "object",
+            "properties": {
+              "resourceId": {
+                "type": "string",
+                "description": "Schema Registry Resource ID"
+              },
+              "apiKey": {
+                "type": "string",
+                "description": "Schema Registry API Key"
+              },
+              "apiSecret": {
+                "type": "string",
+                "description": "Schema Registry API Secret"
+              }
+            }
+          }
+        }  
       }
     },
     "menus": {
@@ -91,6 +121,11 @@
         {
           "command": "confluentCloud.viewResource",
           "when": "view == resourceTree && viewItem == confluentCloudResource",
+          "group": "inline"
+        },
+        {
+          "command": "confluentCloud.configureSchemaRegistry",
+          "when": "view == resourceTree && viewItem == schemaRegistryResource",
           "group": "inline"
         }
       ]

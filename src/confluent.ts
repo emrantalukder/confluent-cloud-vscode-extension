@@ -61,3 +61,9 @@ export const getClusters = (envId: string) => api(
     { environment:  envId }
 );
 
+export const getSchemaRegistryClusters = (envId: string) => api(
+    '/srcm/v2/clusters',
+    'GET',
+    { environment:  envId }
+);
+

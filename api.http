@@ -1,0 +1,3 @@
+curl --request GET \
+  --url https://api.confluent.cloud/org/v2/environments/env-3y1kj \
+  --header 'Authorization: Basic $AUTH'

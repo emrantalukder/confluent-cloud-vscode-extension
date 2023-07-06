@@ -42,19 +42,23 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 		let icon = 'dependency.svg';
 
 		if (element.kind) {
-			treeItem.contextValue = 'confluentCloudResource';
-			icon = `${element.kind}.svg`;
-		} else {
-			switch (treeItem.label) {
-				case "Clusters":
+			switch (element.kind) {
+				case "EnvironmentList":
+					treeItem.contextValue = 'resourceNode';
+					break;
+				case "ClusterList":
 					icon = `Clusters.svg`;
 					break;
-				case "Schema Registry":
+				case "SchemaRegistryList":
 					icon = `SchemaRegistry.svg`;
+					treeItem.contextValue = 'schemaRegistryResource';
 					break;
 				default:
-					treeItem.contextValue = 'resourceNode';
+					treeItem.contextValue = 'confluentCloudResource';
+					icon = `${element.kind}.svg`;
 			}
+		} else {
+			treeItem.contextValue = 'resourceNode';
 		}
 
 		treeItem.iconPath = {
@@ -80,7 +84,7 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 		}
 
 		if (element) {
-			if (element.label === 'Environments') {
+			if (element.kind === 'EnvironmentList') {
 				return confluentCloudResources.environments.map((e: Record<string, any>) => {
 					return {
 						label: e.display_name,
@@ -89,7 +93,7 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 						resource: e
 					};
 				});
-			} else if (element.label === 'Clusters') {
+			} else if (element.kind === 'ClusterList') {
 				// show clusters
 				if (element.resource && element.resource.clusters) {
 					return element.resource.clusters.map((e: Record<string, any>) => {
@@ -102,14 +106,24 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 					});
 				}
 			} else if (element.kind === 'Environment') {
-				return [
-					{ label: 'Clusters', collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, resource: element.resource },
-					{ label: 'Schema Registry', collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, resource: element.resource }
-				];
+
+				let resources = [];
+
+				if (element.resource?.clusters?.length > 0) {
+					let count = element.resource?.clusters?.length;
+					resources.push({ label: `Clusters (${count})`, collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, resource: element.resource, kind: 'ClusterList' });
+				}
+
+				if (element.resource?.schemaRegistryClusters?.length > 0) {
+					let count = element.resource?.schemaRegistryClusters?.length;
+					resources.push({ label: `Schema Registry`, collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, resource: element.resource, kind: 'SchemaRegistryList' });
+				}
+
+				return resources;
 			}
 		} else {
 			return [
-				{ label: 'Environments', collapsibleState: vscode.TreeItemCollapsibleState.Collapsed }
+				{ label: 'Environments', collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, kind: 'EnvironmentList' }
 			];
 		}
 	}
@@ -127,6 +141,7 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 		await this.loadEnvironments();
 		await Promise.all(confluentCloudResources.environments.map(async (e: any) => {
 			await this.loadClusters(e);
+			await this.loadSchemaRegistryClusters(e);
 		}));
 		this._onDidChangeTreeData.fire();
 	}
@@ -140,6 +155,12 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 		console.log('load clusters...');
 		let clusters = await confluent.getClusters(env.id);
 		env.clusters = clusters.data.data || [];
+	}
+
+	async loadSchemaRegistryClusters(env: Record<string, any>): Promise<void> {
+		console.log('load schema registry...');
+		let schemaRegistryClusters = await confluent.getSchemaRegistryClusters(env.id);
+		env.schemaRegistryClusters = schemaRegistryClusters.data.data || [];
 	}
 
 }
@@ -159,9 +180,36 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.commands.registerCommand('confluentCloud.viewResource', (item, elem) => {
 			console.log('view resource...', item);
+			// open webview
+
+			let title = `${item.label} (${item.resource.id})`;
+
+			let panel = vscode.window.createWebviewPanel(
+				'confluentCloudResource',
+				title,
+				vscode.ViewColumn.One,
+				{}
+			);
+
+			panel.iconPath = {
+				dark: vscode.Uri.joinPath(context.extensionUri, 'resources', 'dark', `${item.kind}.svg`),
+				light: vscode.Uri.joinPath(context.extensionUri, 'resources', 'light', `${item.kind}.svg`),
+			};
+
+			const onDiskPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'resource.html');
+			const webviewUri = panel.webview.asWebviewUri(onDiskPath);
+			panel.webview.html = fs.readFileSync(webviewUri.fsPath, 'utf8');
 		}),
 		vscode.commands.registerCommand('confluentCloud.editResource', (item, elem) => {
 			console.log('edit resource...', item);
+		}),
+		vscode.commands.registerCommand('confluentCloud.configureSchemaRegistry', (item, elem) => {
+			console.log('configure schema registry...', item);
+			let schemaRegistryClusters = item.resource.schemaRegistryClusters;
+			let schemaRegistryApiKeys = vscode.workspace.getConfiguration().get('confluentCloud.schemaRegistryApiKeys');
+			if(schemaRegistryClusters.length > 0) {
+				console.log('schema registry...', schemaRegistryClusters);
+			}
 		}),
 		vscode.commands.registerCommand('confluentCloud.openConfiguration', () => {
 			vscode.commands.executeCommand('workbench.action.openSettings', '@ext:emrantalukder.confluent-cloud-extension');
