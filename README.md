@@ -69,3 +69,11 @@ You can author your README using Visual Studio Code. Here are some useful editor
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
+
+
+# Important Links
+
+https://github.com/microsoft/vscode-webview-ui-toolkit/blob/main/docs/getting-started.md
+https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/frameworks/hello-world-react-cra/webview-ui
+https://www.fast.design/docs/components/getting-started
+https://github.com/airbnb/visx
