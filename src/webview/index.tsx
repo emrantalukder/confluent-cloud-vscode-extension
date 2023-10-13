@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { vscode } from "./utilities/vscode";
 
 const App = () => {
@@ -15,13 +15,9 @@ const App = () => {
   return <main>
     <h1>React App</h1>
     <p>React app in a VS Code extension</p>
-    <button onClick={handleClick}>Howdy</button>
+    <button onClick={handleClick}>Show Resource</button>
   </main>;
 };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>, 
-  document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<App />);

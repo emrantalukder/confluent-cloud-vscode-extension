@@ -24,5 +24,5 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
-  devtool: 'source-map' // This will generate a source map for debugging
+  devtool: 'inline-source-map' // This will generate a source map for debugging
 };
