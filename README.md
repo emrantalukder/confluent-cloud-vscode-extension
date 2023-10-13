@@ -73,8 +73,8 @@ You can author your README using Visual Studio Code. Here are some useful editor
 
 # Important Links
 
-https://githubnext.com/projects/react-webview-ui-toolkit/
-https://github.com/microsoft/vscode-webview-ui-toolkit/blob/main/docs/getting-started.md
-https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/frameworks/hello-world-react-cra/webview-ui
-https://www.fast.design/docs/components/getting-started
-https://github.com/airbnb/visx
+* https://githubnext.com/projects/react-webview-ui-toolkit/
+* https://github.com/microsoft/vscode-webview-ui-toolkit/blob/main/docs/getting-started.md
+* https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/frameworks/hello-world-react-cra/webview-ui
+* https://www.fast.design/docs/components/getting-started
+* https://github.com/airbnb/visx
