@@ -6,7 +6,13 @@ let API_KEY = vscode.workspace.getConfiguration().get('confluentCloud.apiKey') a
 let API_SECRET = vscode.workspace.getConfiguration().get('confluentCloud.apiSecret') as string;
 
 const baseUrl = 'https://api.confluent.cloud';
-const authHeader = `Basic ${Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64')}`;
+let authHeader = `Basic ${Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64')}`;
+
+export const updateAuthHeader = () => {
+    API_KEY = vscode.workspace.getConfiguration().get('confluentCloud.apiKey') as string;
+    API_SECRET = vscode.workspace.getConfiguration().get('confluentCloud.apiSecret') as string;
+    authHeader = `Basic ${Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64')}`;
+};
 
 const listApi = async (url: string, data: any[]) => {
 
@@ -31,8 +37,7 @@ const listApi = async (url: string, data: any[]) => {
 
 const api = async (endpoint: string, method: string = 'GET', params: any = {}) => {
 
-    API_KEY = vscode.workspace.getConfiguration().get('confluentCloud.apiKey') as string;
-    API_SECRET = vscode.workspace.getConfiguration().get('confluentCloud.apiSecret') as string;
+    updateAuthHeader();
 
     var options = {
         method: method,

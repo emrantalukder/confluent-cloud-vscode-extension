@@ -150,18 +150,21 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 	async loadEnvironments(): Promise<void> {
 		var res = await confluent.getEnvironments();
 		confluentCloudResources.environments = res.data.data;
+		this._onDidChangeTreeData.fire();
 	}
 
 	async loadClusters(env: Record<string, any>): Promise<void> {
 		console.log('load clusters...');
 		let clusters = await confluent.getClusters(env.id);
 		env.clusters = clusters.data.data || [];
+		this._onDidChangeTreeData.fire();
 	}
 
 	async loadSchemaRegistryClusters(env: Record<string, any>): Promise<void> {
 		console.log('load schema registry...');
 		let schemaRegistryClusters = await confluent.getSchemaRegistryClusters(env.id);
 		env.schemaRegistryClusters = schemaRegistryClusters.data.data || [];
+		this._onDidChangeTreeData.fire();
 	}
 
 }
@@ -233,7 +236,10 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 		vscode.workspace.onDidChangeConfiguration((event: vscode.ConfigurationChangeEvent) => {
 			console.log('config changed...', event);
-			if (event.affectsConfiguration('confluentCloud.apiKey') || event.affectsConfiguration('confluentCloud.apiSecret')) {
+			if (
+				(event.affectsConfiguration('confluentCloud.apiKey') || event.affectsConfiguration('confluentCloud.apiSecret')) &&
+				isConfigValid()
+			) {
 				resourceTreeDataProvider.refresh();
 			}
 		})
