@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { vscode } from "./utilities/vscode";
 import { VSCodeButton } from '@vscode/webview-ui-toolkit/react';
 
-const App = () => {
+const APP = () => {
   
   const [message, setMessage] = useState('');
 
@@ -39,4 +39,4 @@ const App = () => {
 };
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+root.render(<APP />);

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { extensionUri, getNonce } from './extension';
+import { extensionUri, getNonce } from './helpers';
 
 export var openWebViews: Map<string, ResourceViewPanel> = new Map();
 
