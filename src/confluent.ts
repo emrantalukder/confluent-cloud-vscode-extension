@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as vscode from 'vscode';
 
 let API_KEY = vscode.workspace.getConfiguration().get('confluentCloud.apiKey') as string;
@@ -24,13 +24,13 @@ const listApi = async (url: string, data: any[]) => {
         headers: { 'Authorization': authHeader }
     };
 
-    await axios(options)
+    await backoff(() => axios(options)
         .then((res) => {
             data = data.concat(res.data.data);
             if(res.data.metadata.next) {
                 return listApi(res.data.metadata.next, data);
             }
-        });
+        }));
 
     return data;
 };
@@ -58,20 +58,31 @@ const api = async (endpoint: string, method: string = 'GET', params: any = {}) =
     return res;
 };
 
+const backoff: any = async (fn:()=>Promise<any>, attempt=1) => {
+    try {
+        return await fn();
+    } catch (error) {
+        console.error(error);
+        console.log('backoff...');
+        await new Promise(r => setTimeout(r, attempt * 1000));
+        return await backoff(fn, attempt + 1);
+    }
+};
+
 export const getEnvironments = () => api('/org/v2/environments');
 
-export const getClusters = (envId: string) => api(
+export const getClusters = (envId: string) => backoff(() => api(
     '/cmk/v2/clusters', 
     'GET',
     { environment:  envId }
-);
+));
 
-export const getSchemaRegistryClusters = (envId: string) => api(
+export const getSchemaRegistryClusters = (envId: string) => backoff(() => api(
     '/srcm/v2/clusters',
     'GET',
     { environment:  envId }
-);
+));
 
-export const getConnectors = (envId: string, clusterId: string) => api(
-    `/connect/v1/environments/${envId}/clusters/${clusterId}/connectors`
-);
+export const getConnectors = (envId: string, clusterId: string) => backoff(() => api(
+    `/connect/v1/environments/${envId}/clusters/${clusterId}/connectors?expand=info,status,id`
+));

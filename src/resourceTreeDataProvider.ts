@@ -37,6 +37,9 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 				case "ClusterList":
 					icon = `Clusters.svg`;
 					break;
+				case "ConnectorList":
+					icon = `Connectors.svg`;
+					break;
 				case "SchemaRegistryList":
 					icon = `SchemaRegistry.svg`;
 					treeItem.contextValue = 'schemaRegistryResource';
@@ -102,6 +105,19 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 				}
 
 				return resources;
+			} else if (element.kind === 'ConnectorList') { 
+
+				if (element.resource && element.resource.connectors) {
+					return element.resource.connectors.map((e: Record<string, any>) => {
+						return {
+							label: e.info.name,
+							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							kind: 'Connector',
+							resource: e
+						};
+					});
+				}
+			
 			} else if (element.kind === 'Environment') {
 
 				let resources = [];
@@ -162,9 +178,14 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 
 	async loadConnectors(env: Record<string, any>, cluster: Record<string, any>): Promise<void> {
 		console.log('load connectors...');
-		// let connectors = await confluent.getConnectors(env.id, cluster.id);
-		// cluster.connectors = connectors.data.data || [];
-		cluster.connectors = ['a', 'b', 'c'];
+		let connectors = await confluent.getConnectors(env.id, cluster.id);
+		cluster.connectors = [];
+		for (const k of Object.keys(connectors.data)) {
+			let c = connectors.data[k];
+			c.id = c.id.id;
+			cluster.connectors.push(connectors.data[k]);
+		}
+		console.log(cluster.connectors);
 		this._onDidChangeTreeData.fire();
 	}
 

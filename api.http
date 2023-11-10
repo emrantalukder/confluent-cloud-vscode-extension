@@ -42,3 +42,9 @@ curl --request POST \
 curl --request GET \
   --url 'https://api.confluent.cloud/connect/v1/environments/env-gqzx2n/clusters/lkc-j8jjdq/connectors?expand=info,status,id' \
   --header 'Authorization: Basic {{API_KEY}}:{{API_SECRET}}'
+
+###
+
+curl --request GET \
+  --url 'https://api.confluent.cloud/connect/v1/environments/env-rvw7k/clusters/lkc-wwj3w/connectors?expand=info,status,id' \
+  --header 'Authorization: Basic {{API_KEY}}:{{API_SECRET}}'
