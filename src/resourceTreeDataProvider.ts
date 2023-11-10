@@ -87,12 +87,21 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 					return element.resource.clusters.map((e: Record<string, any>) => {
 						return {
 							label: e.spec.display_name,
-							collapsibleState: vscode.TreeItemCollapsibleState.None,
+							collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
 							kind: e.kind,
 							resource: e
 						};
 					});
 				}
+			} else if (element.kind === 'Cluster') {
+				let resources = [];
+
+				if (element.resource?.connectors?.length > 0) {
+					let count = element.resource?.connectors?.length;
+					resources.push({ label: `Connectors (${count})`, collapsibleState: vscode.TreeItemCollapsibleState.Collapsed, resource: element.resource, kind: 'ConnectorList' });
+				}
+
+				return resources;
 			} else if (element.kind === 'Environment') {
 
 				let resources = [];
@@ -144,6 +153,18 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 		console.log('load clusters...');
 		let clusters = await confluent.getClusters(env.id);
 		env.clusters = clusters.data.data || [];
+		for (let idx in env.clusters) {
+			let cluster = env.clusters[idx];
+			await this.loadConnectors(env, cluster);
+		}
+		this._onDidChangeTreeData.fire();
+	}
+
+	async loadConnectors(env: Record<string, any>, cluster: Record<string, any>): Promise<void> {
+		console.log('load connectors...');
+		// let connectors = await confluent.getConnectors(env.id, cluster.id);
+		// cluster.connectors = connectors.data.data || [];
+		cluster.connectors = ['a', 'b', 'c'];
 		this._onDidChangeTreeData.fire();
 	}
 

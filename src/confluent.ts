@@ -49,7 +49,7 @@ const api = async (endpoint: string, method: string = 'GET', params: any = {}) =
     let res = await axios(options);
 
     let data = res.data.data;
-    if(res.data.metadata.next) {
+    if(res.data.metadata?.next) {
         let next = res.data.metadata.next;
         let listData = await listApi(next, data);
         res.data.data = listData;
@@ -72,3 +72,6 @@ export const getSchemaRegistryClusters = (envId: string) => api(
     { environment:  envId }
 );
 
+export const getConnectors = (envId: string, clusterId: string) => api(
+    `/connect/v1/environments/${envId}/clusters/${clusterId}/connectors`
+);

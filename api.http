@@ -1,3 +1,44 @@
+@API_KEY={{$dotenv API_KEY}}
+@API_SECRET={{$dotenv API_SECRET}}
+
 curl --request GET \
-  --url https://api.confluent.cloud/org/v2/environments/env-3y1kj \
-  --header 'Authorization: Basic $AUTH'
+  --url https://api.confluent.cloud/org/v2/environments/env-gqzx2n \
+  --header 'Authorization: Basic {{API_KEY}}:{{API_SECRET}}'
+
+###
+
+curl --request POST \
+--header 'Content-Type: application/json' \
+--url https://api.telemetry.confluent.cloud/v2/metrics/cloud/query \
+--user {{API_KEY}}:{{API_SECRET}} \
+--data '
+{
+    "aggregations": [
+        {
+            "metric": "io.confluent.kafka.server/received_bytes"
+        }
+    ],
+    "filter": {
+        "op": "OR",
+        "filters": [
+            {
+                "field": "resource.kafka.id",
+                "op": "EQ",
+                "value": "lkc-j8jjdq"
+            }
+        ]
+    },
+    "granularity": "PT1M",
+    "intervals": [
+        "2023-11-10T07:28:00-06:00/2023-11-10T08:28:00-06:00"
+    ],
+    "limit": 1000
+}
+'
+
+
+###
+
+curl --request GET \
+  --url 'https://api.confluent.cloud/connect/v1/environments/env-gqzx2n/clusters/lkc-j8jjdq/connectors?expand=info,status,id' \
+  --header 'Authorization: Basic {{API_KEY}}:{{API_SECRET}}'
