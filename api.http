@@ -30,7 +30,7 @@ curl --request POST \
     },
     "granularity": "PT1M",
     "intervals": [
-        "2023-11-10T07:28:00-06:00/2023-11-10T08:28:00-06:00"
+        "now-6h/now"
     ],
     "limit": 1000
 }

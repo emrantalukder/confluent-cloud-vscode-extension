@@ -1,0 +1,27 @@
+vscode-panels {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 3px 2px;
+    margin: 32px;
+    padding: 4px 16px;
+    min-height: 400px;
+}
+
+.vscode-dark vscode-panels {
+    background-color: var(--vscode-sideBar-background);
+}
+
+
+.vscode-light vscode-panels {
+    background-color: rgb(255, 255, 255);
+}
+
+vscode-panel-tab {
+    padding: 8px 0px;
+}
+
+vscode-panel-tab:focus {
+    border-color: transparent;
+}
+
+header.resource-view-header {
+    margin: 32px;
+}

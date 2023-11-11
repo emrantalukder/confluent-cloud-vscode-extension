@@ -9,7 +9,7 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "@typescript-eslint/naming-convention": "warn",
+        // "@typescript-eslint/naming-convention": "warn",
         "@typescript-eslint/semi": "warn",
         "curly": "warn",
         "eqeqeq": "warn",
@@ -20,5 +20,10 @@
         "out",
         "dist",
         "**/*.d.ts"
+    ],
+    "extends": [
+        // "eslint:recommended",
+        // "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended"
     ]
 }

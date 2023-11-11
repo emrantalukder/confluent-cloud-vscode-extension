@@ -62,8 +62,9 @@ export class ResourceViewPanel {
 			<head>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
 				<title>React Webview</title>
+                <link rel="stylesheet" type="text/css" nonce="${nonce}" href="${webview.asWebviewUri(vscode.Uri.joinPath(extensionUri(), 'media', 'index.css'))}">
 			</head>
 			<body>
 				<div id="root"></div>
