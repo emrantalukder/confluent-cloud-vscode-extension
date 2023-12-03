@@ -44,6 +44,15 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 					icon = `SchemaRegistry.svg`;
 					treeItem.contextValue = 'schemaRegistryResource';
 					break;
+				case "Cluster":
+					treeItem.contextValue = 'confluentCloudResource';
+					if (element.resource?.id.startsWith('lsrc')) {
+						icon = `SchemaRegistry.svg`;
+					}
+					else if (element.resource?.id.startsWith('lkc')) {
+						icon = `Cluster.svg`;
+					}
+					break;
 				default:
 					treeItem.contextValue = 'confluentCloudResource';
 					icon = `${element.kind}.svg`;
@@ -84,6 +93,18 @@ class ResourceTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
 						resource: e
 					};
 				});
+			} else if (element.kind === 'SchemaRegistryList') {
+				// show clusters
+				if (element.resource && element.resource.schemaRegistryClusters) {
+					return element.resource.schemaRegistryClusters.map((e: Record<string, any>) => {
+						return {
+							label: e.spec.display_name,
+							collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+							kind: e.kind,
+							resource: e
+						};
+					});
+				}
 			} else if (element.kind === 'ClusterList') {
 				// show clusters
 				if (element.resource && element.resource.clusters) {
